@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Shop — LuxInteriors</title>
+    <link rel="stylesheet" href="../public/css/style.css" />
+    <link rel="stylesheet" href="../public/css/animations.css" />
+    <link rel="stylesheet" href="../public/css/responsive.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="cursor"></div>
+    <div id="cursor-ring"></div>
+    <div id="toast"></div>
+    <!-- Nav included via main.js / or copy nav markup here -->
+    <main style="padding: calc(var(--nav-h) + 4rem) 5vw 5rem">
+      <h1 class="section-title" style="margin-bottom: 2rem">All Products</h1>
+      <div class="filter-bar">
+        <button class="filter-pill active" data-cat="All">All</button>
+        <button class="filter-pill" data-cat="Sofas">Sofas</button>
+        <button class="filter-pill" data-cat="Chairs">Chairs</button>
+        <button class="filter-pill" data-cat="Lighting">Lighting</button>
+        <button class="filter-pill" data-cat="Tables">Tables</button>
+        <button class="filter-pill" data-cat="Beds">Beds</button>
+        <button class="filter-pill" data-cat="Decor">Decor</button>
+        <select id="sort-select">
+          <option value="">Sort by</option>
+          <option value="price_asc">Price ↑</option>
+          <option value="price_desc">Price ↓</option>
+          <option value="rating">Top Rated</option>
+        </select>
+      </div>
+      <div id="products-grid" class="products-grid"></div>
+    </main>
+    <script src="../public/js/main.js"></script>
+    <script src="../public/js/products.js"></script>
+  </body>
+</html>

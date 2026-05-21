@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Login — LuxInteriors</title>
+  <meta name="description" content="Sign in or create your LuxInteriors account to shop premium furniture." />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0f0e0c;--bg2:#161410;--bg3:#1e1b17;--card:#1a1714;
+      --gold:#c9a84c;--gold2:#e8c97a;--cream:#f5f0e8;
+      --text:#d4cfc7;--muted:#7a746a;--border:rgba(201,168,76,.2);
+      --radius:14px;--ease:cubic-bezier(.4,0,.2,1);
+      --red:#e07070;--green:#6fcf97;
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:"Jost",sans-serif;font-weight:300;line-height:1.7;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    button{font-family:inherit;border:none;outline:none;cursor:pointer}
+
+    /* BG decoration */
+    .bg-deco{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+    .bg-deco::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.07) 0%,transparent 70%);top:-200px;right:-200px}
+    .bg-deco::after{content:"";position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.05) 0%,transparent 70%);bottom:-100px;left:-100px}
+
+    /* Card */
+    .auth-wrap{position:relative;z-index:1;width:100%;max-width:480px;padding:1rem}
+    .auth-logo{text-align:center;margin-bottom:2.5rem}
+    .auth-logo a{display:inline-flex;flex-direction:column;align-items:center;gap:.6rem}
+    .auth-logo .brand{font-family:"Cormorant Garamond",serif;font-size:1.6rem;letter-spacing:.2em;color:var(--cream)}
+    .auth-logo .sub{font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+    .auth-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2.5rem;backdrop-filter:blur(20px)}
+
+    /* Tabs */
+    .auth-tabs{display:flex;gap:0;margin-bottom:2rem;border-bottom:1px solid var(--border)}
+    .tab-btn{flex:1;padding:.85rem;background:transparent;color:var(--muted);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;transition:color .3s;position:relative}
+    .tab-btn.active{color:var(--cream)}
+    .tab-btn.active::after{content:"";position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--gold)}
+
+    /* Forms */
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+    .form-group{margin-bottom:1.25rem}
+    .form-label{display:block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+    .form-input{
+      width:100%;padding:.85rem 1rem;
+      background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+      color:var(--cream);font-family:inherit;font-size:.95rem;
+      transition:border-color .3s,box-shadow .3s;
+    }
+    .form-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1)}
+    .form-input::placeholder{color:var(--muted)}
+    .form-input.error{border-color:var(--red)}
+
+    /* Password toggle */
+    .pw-wrap{position:relative}
+    .pw-toggle{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);background:none;color:var(--muted);font-size:1.1rem;transition:color .2s}
+    .pw-toggle:hover{color:var(--cream)}
+
+    /* Submit btn */
+    .btn-submit{
+      width:100%;padding:1rem;
+      background:var(--gold);color:var(--bg);
+      font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+      border-radius:8px;margin-top:.5rem;
+      transition:background .3s,transform .2s,box-shadow .3s;
+      position:relative;overflow:hidden;
+    }
+    .btn-submit:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.25)}
+    .btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .btn-submit .spinner{display:none;width:18px;height:18px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto}
+    .btn-submit.loading .btn-text{display:none}
+    .btn-submit.loading .spinner{display:block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Alert */
+    .alert{padding:.85rem 1rem;border-radius:8px;font-size:.88rem;margin-bottom:1rem;display:none}
+    .alert.show{display:block}
+    .alert.success{background:rgba(111,207,151,.12);border:1px solid rgba(111,207,151,.3);color:#6fcf97}
+    .alert.error{background:rgba(224,112,112,.12);border:1px solid rgba(224,112,112,.3);color:var(--red)}
+
+    /* Divider */
+    .divider{display:flex;align-items:center;gap:1rem;margin:1.5rem 0;color:var(--muted);font-size:.75rem}
+    .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--border)}
+
+    /* Field error */
+    .field-err{font-size:.75rem;color:var(--red);margin-top:.3rem;display:none}
+    .field-err.show{display:block}
+
+    /* Strength bar */
+    .strength-bar{display:flex;gap:3px;margin-top:.5rem}
+    .sb{flex:1;height:3px;background:var(--bg3);border-radius:2px;transition:background .3s}
+    .sb.weak{background:#e07070}
+    .sb.ok{background:#f4c842}
+    .sb.strong{background:#6fcf97}
+
+    /* Bottom link */
+    .auth-foot{text-align:center;margin-top:1.5rem;font-size:.82rem;color:var(--muted)}
+    .auth-foot a{color:var(--gold);transition:color .2s}
+    .auth-foot a:hover{color:var(--gold2)}
+
+    /* Back link */
+    .back-link{display:inline-flex;align-items:center;gap:.5rem;color:var(--muted);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;transition:color .3s;margin-bottom:2rem}
+    .back-link:hover{color:var(--cream)}
+
+    /* Animations */
+    @keyframes fup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+    .auth-wrap{animation:fup .6s var(--ease) both}
+  </style>
+</head>
+<body>
+  <div class="bg-deco"></div>
+
+  <div class="auth-wrap">
+    <a href="/" class="back-link">← Back to Store</a>
+
+    <div class="auth-logo">
+      <a href="/">
+        <div class="brand">LuxInteriors</div>
+        <div class="sub">Premium Furniture & Decor</div>
+      </a>
+    </div>
+
+    <div class="auth-card">
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+        <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Create Account</button>
+      </div>
+
+      <!-- Login Panel -->
+      <div class="tab-panel active" id="panel-login">
+        <div class="alert" id="login-alert"></div>
+        <form id="login-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <input class="form-input" type="email" id="login-email" placeholder="your@email.com" autocomplete="email" required />
+            <div class="field-err" id="login-email-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-pw">Password</label>
+            <div class="pw-wrap">
+              <input class="form-input" type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" required />
+              <button type="button" class="pw-toggle" onclick="togglePw('login-pw',this)">👁</button>
+            </div>
+            <div class="field-err" id="login-pw-err"></div>
+          </div>
+          <button type="submit" class="btn-submit" id="login-btn">
+            <span class="btn-text">Sign In</span>
+            <div class="spinner"></div>
+          </button>
+        </form>
+        <div class="auth-foot">
+          Don't have an account? <a href="#" onclick="switchTab('register')">Create one →</a>
+        </div>
+      </div>
+
+      <!-- Register Panel -->
+      <div class="tab-panel" id="panel-register">
+        <div class="alert" id="register-alert"></div>
+        <form id="register-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Full Name</label>
+            <input class="form-input" type="text" id="reg-name" placeholder="Your full name" autocomplete="name" required />
+            <div class="field-err" id="reg-name-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Email Address</label>
+            <input class="form-input" type="email" id="reg-email" placeholder="your@email.com" autocomplete="email" required />
+            <div class="field-err" id="reg-email-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-pw">Password</label>
+            <div class="pw-wrap">
+              <input class="form-input" type="password" id="reg-pw" placeholder="Min. 8 chars, 1 uppercase, 1 number" autocomplete="new-password" required oninput="checkStrength(this.value)" />
+              <button type="button" class="pw-toggle" onclick="togglePw('reg-pw',this)">👁</button>
+            </div>
+            <div class="strength-bar"><div class="sb" id="sb1"></div><div class="sb" id="sb2"></div><div class="sb" id="sb3"></div><div class="sb" id="sb4"></div></div>
+            <div class="field-err" id="reg-pw-err"></div>
+          </div>
+          <button type="submit" class="btn-submit" id="register-btn">
+            <span class="btn-text">Create Account</span>
+            <div class="spinner"></div>
+          </button>
+        </form>
+        <div class="auth-foot">
+          Already have an account? <a href="#" onclick="switchTab('login')">Sign in →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = "";
+
+    // ── Tab switching ──────────────────────────────────────
+    function switchTab(t) {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      document.getElementById("tab-" + t).classList.add("active");
+      document.getElementById("panel-" + t).classList.add("active");
+    }
+
+    // ── Password toggle ────────────────────────────────────
+    function togglePw(id, btn) {
+      const inp = document.getElementById(id);
+      inp.type = inp.type === "password" ? "text" : "password";
+      btn.textContent = inp.type === "password" ? "👁" : "🔒";
+    }
+
+    // ── Password strength ──────────────────────────────────
+    function checkStrength(val) {
+      const bars = [document.getElementById("sb1"),document.getElementById("sb2"),document.getElementById("sb3"),document.getElementById("sb4")];
+      bars.forEach(b => b.className = "sb");
+      let score = 0;
+      if (val.length >= 8) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+      const cls = score <= 1 ? "weak" : score <= 2 ? "ok" : "strong";
+      for (let i = 0; i < score; i++) bars[i].classList.add(cls);
+    }
+
+    // ── Show/hide field error ──────────────────────────────
+    function fieldErr(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.classList.toggle("show", !!msg);
+      document.getElementById(id.replace("-err","")).classList.toggle("error", !!msg);
+    }
+
+    // ── Alert ──────────────────────────────────────────────
+    function showAlert(id, msg, type) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.className = "alert " + type + " show";
+    }
+
+    // ── Set button loading state ───────────────────────────
+    function setLoading(btn, state) {
+      btn.classList.toggle("loading", state);
+      btn.disabled = state;
+    }
+
+    // ── Redirect after login ───────────────────────────────
+    function handleSuccess(data) {
+      localStorage.setItem("lux_token", data.token);
+      localStorage.setItem("lux_user", JSON.stringify(data.user));
+      const redirect = new URLSearchParams(window.location.search).get("redirect") || "/";
+      window.location.href = redirect;
+    }
+
+    // ── Login form ─────────────────────────────────────────
+    document.getElementById("login-form").addEventListener("submit", async e => {
+      e.preventDefault();
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-pw").value;
+      let valid = true;
+
+      fieldErr("login-email-err", ""); fieldErr("login-pw-err", "");
+      if (!email) { fieldErr("login-email-err", "Email is required"); valid = false; }
+      if (!password) { fieldErr("login-pw-err", "Password is required"); valid = false; }
+      if (!valid) return;
+
+      const btn = document.getElementById("login-btn");
+      setLoading(btn, true);
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST", headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Login failed");
+        showAlert("login-alert", data.message, "success");
+        setTimeout(() => handleSuccess(data), 800);
+      } catch (err) {
+        showAlert("login-alert", err.message, "error");
+        setLoading(btn, false);
+      }
+    });
+
+    // ── Register form ──────────────────────────────────────
+    document.getElementById("register-form").addEventListener("submit", async e => {
+      e.preventDefault();
+      const name = document.getElementById("reg-name").value.trim();
+      const email = document.getElementById("reg-email").value.trim();
+      const password = document.getElementById("reg-pw").value;
+      let valid = true;
+
+      ["reg-name-err","reg-email-err","reg-pw-err"].forEach(id => fieldErr(id, ""));
+      if (!name) { fieldErr("reg-name-err", "Name is required"); valid = false; }
+      if (!email || !email.includes("@")) { fieldErr("reg-email-err", "Valid email required"); valid = false; }
+      if (password.length < 8) { fieldErr("reg-pw-err", "Min. 8 characters"); valid = false; }
+      else if (!/[A-Z]/.test(password)) { fieldErr("reg-pw-err", "Must include an uppercase letter"); valid = false; }
+      else if (!/[0-9]/.test(password)) { fieldErr("reg-pw-err", "Must include a number"); valid = false; }
+      if (!valid) return;
+
+      const btn = document.getElementById("register-btn");
+      setLoading(btn, true);
+      try {
+        const res = await fetch("/api/auth/register", {
+          method: "POST", headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ name, email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (data.errors) {
+            data.errors.forEach(err => {
+              if (err.path === "email") fieldErr("reg-email-err", err.msg);
+              if (err.path === "password") fieldErr("reg-pw-err", err.msg);
+              if (err.path === "name") fieldErr("reg-name-err", err.msg);
+            });
+            throw new Error("Please fix the errors above.");
+          }
+          throw new Error(data.message || "Registration failed");
+        }
+        showAlert("register-alert", data.message, "success");
+        setTimeout(() => handleSuccess(data), 800);
+      } catch (err) {
+        showAlert("register-alert", err.message, "error");
+        setLoading(btn, false);
+      }
+    });
+
+    // ── Auto-redirect if already logged in ─────────────────
+    if (localStorage.getItem("lux_token")) {
+      window.location.href = "/";
+    }
+  </script>
+</body>
+</html>

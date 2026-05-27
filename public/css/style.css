@@ -20,12 +20,12 @@
   --bg2: #161410;
   --bg3: #1e1b17;
   --card: #1a1714;
-  --gold: #c9a84c;
-  --gold2: #e8c97a;
+  --gold: #c0c0c0;
+  --gold2: #e8e8e8;
   --cream: #f5f0e8;
   --text: #d4cfc7;
   --muted: #7a746a;
-  --border: rgba(201, 168, 76, 0.2);
+  --border: rgba(192, 192, 192, 0.2);
   --radius: 14px;
   --nav-h: 76px;
   --ease: cubic-bezier(0.4, 0, 0.2, 1);

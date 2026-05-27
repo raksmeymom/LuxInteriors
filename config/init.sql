@@ -1,5 +1,6 @@
 -- ── LuxInteriors Database ────────────────────────────────
-CREATE DATABASE IF NOT EXISTS luxinteriors;
+DROP DATABASE IF EXISTS luxinteriors;
+CREATE DATABASE luxinteriors;
 USE luxinteriors;
 
 -- ─────────────────────────────────────────────────────────
@@ -124,3 +125,52 @@ INSERT IGNORE INTO users (name, email, password_hash, role) VALUES
   ('Admin', 'admin@luxinteriors.com',
    '$2a$12$tFkou1VtPrMTNKq.TSgcQu9e8xas1mMUYGMAvO4G/lkOxjsUXtxHS',
    'admin');
+
+-- ─────────────────────────────────────────────────────────
+-- SEED: Newsletter Subscribers
+-- ─────────────────────────────────────────────────────────
+INSERT IGNORE INTO newsletter (email, subscribed, created_at) VALUES
+  ('sarah.mitchell@email.com', TRUE, NOW() - INTERVAL 45 DAY),
+  ('james.cooper@email.com', TRUE, NOW() - INTERVAL 32 DAY),
+  ('emma.johnson@email.com', TRUE, NOW() - INTERVAL 28 DAY),
+  ('david.chen@email.com', TRUE, NOW() - INTERVAL 15 DAY),
+  ('olivia.martinez@email.com', TRUE, NOW() - INTERVAL 12 DAY),
+  ('michael.thompson@email.com', TRUE, NOW() - INTERVAL 8 DAY),
+  ('sophia.anderson@email.com', TRUE, NOW() - INTERVAL 5 DAY),
+  ('christopher.lee@email.com', TRUE, NOW() - INTERVAL 2 DAY),
+  ('isabella.brown@email.com', TRUE, NOW() - INTERVAL 1 DAY),
+  ('ethan.rodriguez@email.com', TRUE, NOW()),
+  ('ava.wilson@email.com', TRUE, NOW()),
+  ('noah.garcia@email.com', TRUE, NOW());
+
+-- ─────────────────────────────────────────────────────────
+-- SEED: Contact Inquiries
+-- ─────────────────────────────────────────────────────────
+INSERT IGNORE INTO contacts (name, email, subject, message, status, created_at) VALUES
+  ('Margaret Stevens', 'margaret.stevens@email.com', 'Custom Order Inquiry', 
+   'Hello, I am interested in a custom sectional sofa in emerald green. Can you provide details on customization options and lead times?',
+   'new', NOW() - INTERVAL 3 DAY),
+  
+  ('Robert Patterson', 'robert.patterson@email.com', 'Shipping to Canada',
+   'Do you ship internationally? I am interested in the Canopy King Bed but I live in Toronto, Canada.',
+   'read', NOW() - INTERVAL 2 DAY),
+  
+  ('Catherine Lewis', 'catherine.lewis@email.com', 'Warranty Information',
+   'I purchased the Velvet Sectional Sofa last month. What is the warranty coverage?',
+   'replied', NOW() - INTERVAL 18 HOUR),
+  
+  ('James Morgan', 'james.morgan@email.com', 'Product Recommendation',
+   'We are redesigning our office space. Can you recommend suitable furniture from your collection? We need around 8 workstations.',
+   'new', NOW() - INTERVAL 12 HOUR),
+  
+  ('Diana Foster', 'diana.foster@email.com', 'Return & Exchange',
+   'I received my order but the color of the lamp does not match my space. Can I exchange it for the pendant cluster light?',
+   'read', NOW() - INTERVAL 6 HOUR),
+  
+  ('Victor Hayes', 'victor.hayes@email.com', 'Bulk Order Discount',
+   'We run a boutique hotel and are interested in purchasing multiple items for a suite renovation. Can you provide bulk pricing?',
+   'new', NOW() - INTERVAL 4 HOUR),
+  
+  ('Rachel King', 'rachel.king@email.com', 'Product Care Tips',
+   'I just received the Walnut Dining Table. Can you send me care and maintenance instructions?',
+   'replied', NOW() - INTERVAL 1 HOUR);
